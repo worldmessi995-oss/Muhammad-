@@ -1,60 +1,54 @@
-// GOALZONE — Football live scores, fixtures and results
-// API key stays on the server. Requires Node.js 18+.
-const express = require("express");
-const path = require("path");
-require("dotenv").config();
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
-app.use(express.static(path.join(__dirname, "public")));
 
-const API_BASE = "https://v3.football.api-sports.io";
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
 const API_KEY = process.env.APISPORTS_KEY;
-const cache = new Map();
+const BASE_URL = 'https://api-sports.io';
 
-function validDate(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value || "");
-}
-
-async function footballApi(endpoint, cacheKey, ttlMs) {
-  const cached = cache.get(cacheKey);
-  if (cached && Date.now() - cached.time < ttlMs) return cached.data;
-
-  if (!API_KEY) {
-    const error = new Error("Football data API key is not configured.");
-    error.status = 503;
-    throw error;
-  }
-
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "GET",
-    headers: { "x-apisports-key": API_KEY }
-  });
-  const data = await response.json();
-
-  if (!response.ok || (data.errors && Object.keys(data.errors).length)) {
-    const error = new Error("The football data provider returned an error.");
-    error.status = response.status || 502;
-    error.details = data.errors || data;
-    throw error;
-  }
-
-  cache.set(cacheKey, { time: Date.now(), data });
-  return data;
-}
-
-function sendError(res, error) {
-  console.error(error.message, error.details || "");
-  res.status(error.status || 502).json({
-    error: error.message || "Unable to retrieve football data.",
-    details: error.details || undefined
-  });
-}
-
-app.get("/api/live", async (_req, res) => {
-  try {
-    const data = await footballApi("/fixtures?live=all&timezone=Asia%2FKolkata", "live", 25000);
-    res.json(data);
-  } catch (error) { sendError(res, error); }
+// 1. Live Matches Route
+app.get('/api/live', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/fixtures?live=all`, {
+            headers: { 'x-apisports-key': API_KEY }
+        });
+        
+        if (response.data.errors && Object.keys(response.data.errors).length > 0) {
+            return res.status(400).json({ error: response.data.errors });
+        }
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-app.get("/api/fixtures", async (req, res) => {
+// 2. Fixtures By Date Route
+app.get('/api/fixtures', async (req, res) => {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: 'Date is required' });
+    
+    try {
+        const response = await axios.get(`${BASE_URL}/fixtures?date=${date}`, {
+            headers: { 'x-apisports-key': API_KEY }
+        });
+
+        if (response.data.errors && Object.keys(response.data.errors).length > 0) {
+            return res.status(400).json({ error: response.data.errors });
+        }
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+const PORT = process.env.PORT || 10003;
+app.listen(PORT, () => {
+    console.log(`GOALZONE running on port ${PORT}`);
+});
