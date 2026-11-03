@@ -11,7 +11,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 const API_KEY = process.env.APISPORTS_KEY;
-const BASE_URL = 'https://api-sports.io';
+// ഫുട്ബോൾ API-യുടെ ഒഫീഷ്യൽ ബേസ് യു.ആർ.എൽ ഇവിടെ നൽകിയിരിക്കുന്നു
+const BASE_URL = 'https://v3.football.api-sports.io';
 
 // 1. Live Matches Route
 app.get('/api/live', async (req, res) => {
