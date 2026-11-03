@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOALZONE - Live Football Scores</title>
+    <title>GOALZONE - Football Match Centre</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -11,6 +11,7 @@
             --accent-color: #58a6ff;
             --text-color: #c9d1d9;
             --live-color: #da3637;
+            --btn-active: #238636;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -25,6 +26,28 @@
         h1 { color: #ffffff; margin-bottom: 5px; }
         .subtitle { color: #8b949e; margin-bottom: 20px; }
         .container { width: 100%; max-width: 600px; }
+        
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .tab-btn.active {
+            background-color: var(--btn-active);
+            color: white;
+            border-color: var(--btn-active);
+        }
+        
         .match-card {
             background-color: var(--card-bg);
             border: 1px solid #30363d;
@@ -51,6 +74,10 @@
             font-weight: bold;
             animation: blink 1.5s infinite;
         }
+        .time-badge {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
         @keyframes blink { 50% { opacity: 0.5; } }
         .teams-container {
             display: flex;
@@ -66,6 +93,11 @@
             color: var(--accent-color);
             padding: 0 20px;
         }
+        .vs {
+            font-size: 16px;
+            color: #8b949e;
+            padding: 0 20px;
+        }
         .status-msg {
             text-align: center;
             color: #8b949e;
@@ -74,62 +106,76 @@
             border-radius: 8px;
             border: 1px solid #30363d;
         }
-        .refresh-btn {
-            background-color: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .refresh-btn:hover { background-color: #30363d; }
     </style>
 </head>
 <body>
 
     <h1>GOALZONE</h1>
-    <div class="subtitle">Live Football Match Centre</div>
+    <div class="subtitle">Football Match Centre</div>
 
-    <button class="refresh-btn" onclick="fetchLiveScores()">Refresh Scores</button>
+    <div class="tabs">
+        <button class="tab-btn active" id="live-tab" onclick="switchTab('live')">Live Scores</button>
+        <button class="tab-btn" id="fixtures-tab" onclick="switchTab('fixtures')">Upcoming Fixtures</button>
+    </div>
 
     <div class="container" id="match-list">
-        <div class="status-msg">Loading live matches...</div>
+        <div class="status-msg">Loading matches...</div>
     </div>
 
     <script>
-        async function fetchLiveScores() {
+        let currentTab = 'live';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('live-tab').classList.toggle('active', tab === 'live');
+            document.getElementById('fixtures-tab').classList.toggle('active', tab === 'fixtures');
+            loadData();
+        }
+
+        async function loadData() {
             const container = document.getElementById('match-list');
-            container.innerHTML = '<div class="status-msg">Updating scores...</div>';
+            container.innerHTML = '<div class="status-msg">Updating...</div>';
             
             try {
-                // വെബ്സൈറ്റ് റൺ ചെയ്യുന്ന അതേ സെർവറിലെ API റൂട്ടിലേക്ക് കണക്റ്റ് ചെയ്യുന്നു
-                const response = await fetch('/api/live');
+                const endpoint = currentTab === 'live' ? '/api/live' : '/api/fixtures';
+                const response = await fetch(endpoint);
                 const data = await response.json();
 
                 if (!response.ok || !data.response || data.response.length === 0) {
-                    container.innerHTML = '<div class="status-msg">No live matches available at the moment.</div>';
+                    container.innerHTML = `<div class="status-msg">No ${currentTab} matches available at the moment.</div>`;
                     return;
                 }
 
-                container.innerHTML = ''; // പഴയ വിവരങ്ങൾ മാറ്റുന്നു
+                container.innerHTML = '';
 
-                data.response.forEach(match => {
+                data.response.slice(0, 50).forEach(match => { // പരമാവധി 50 മത്സരങ്ങൾ കാണിക്കുന്നു
                     const fixture = match.fixture;
                     const teams = match.teams;
                     const goals = match.goals;
 
                     const card = document.createElement('div');
                     card.className = 'match-card';
+
+                    let statusHTML = '';
+                    let middleHTML = '';
+
+                    if (currentTab === 'live') {
+                        statusHTML = `<span class="live-badge">${fixture.status.elapsed}'</span>`;
+                        middleHTML = `<div class="score">${goals.home ?? 0} - ${goals.away ?? 0}</div>`;
+                    } else {
+                        const matchDate = new Date(fixture.date).toLocaleString('ml-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+                        statusHTML = `<span class="time-badge">${fixture.status.short}</span>`;
+                        middleHTML = `<div class="vs"><div>VS</div><div style="font-size:11px; margin-top:5px; color:#8b949e;">${matchDate}</div></div>`;
+                    }
+
                     card.innerHTML = `
                         <div class="match-header">
                             <span>${match.league.name} (${match.league.country})</span>
-                            <span class="live-badge">${fixture.status.elapsed}'</span>
+                            ${statusHTML}
                         </div>
                         <div class="teams-container">
                             <div class="team">${teams.home.name}</div>
-                            <div class="score">${goals.home ?? 0} - ${goals. Caring ?? 0}</div>
+                            ${middleHTML}
                             <div class="team">${teams.away.name}</div>
                         </div>
                     `;
@@ -137,15 +183,15 @@
                 });
 
             } catch (error) {
-                console.error(error);
-                container.innerHTML = '<div class="status-msg" style="color: #da3637;">Could not fetch live matches. Please check your API configuration or quota.</div>';
+                container.innerHTML = '<div class="status-msg" style="color: #da3637;">Could not load data. Please check configuration.</div>';
             }
         }
 
-        // പേജ് ലോഡ് ചെയ്യുമ്പോൾ തനിയെ റൺ ആകാൻ
-        fetchLiveScores();
-        // ഓരോ 1 മിനിറ്റിലും സ്വയം അപ്ഡേറ്റ് ആകാൻ
-        setInterval(fetchLiveScores, 60000);
+        loadData();
+        // ഓരോ 1 മിനിറ്റിലും ഓട്ടോമാറ്റിക് റിഫ്രഷ്
+        setInterval(() => {
+            if(currentTab === 'live') loadData();
+        }, 60000);
     </script>
 </body>
 </html>
