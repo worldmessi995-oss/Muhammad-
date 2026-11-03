@@ -1,54 +1,63 @@
-// GOALZONE backend — Node.js + Express
-const express = require("express");
-const path = require("path");
-require("dotenv").config();
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+// എല്ലാ ഭാഗത്തുനിന്നുമുള്ള കണക്ഷൻ അനുവദിക്കാൻ CORS ഉപയോഗിക്കുന്നു
+app.use(cors());
+app.use(express.json());
+
+// പബ്ലിക് ഫോൾഡറിലെ ഫ്രണ്ട് എൻഡ് ഫയലുകൾ സെർവ് ചെയ്യാൻ
+app.use(express.static(path.join(__dirname)));
+
+const API_KEY = process.env.APISPORTS_KEY;
+const BASE_URL = 'https://api-sports.io';
+
+// 1. Live Matches Route
+app.get('/api/live', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/fixtures?live=all`, {
+            headers: {
+                'x-apisports-key': API_KEY,
+                'x-rapidapi-host': 'v3.football.api-sports.io'
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("Live API Error:", error.message);
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// ലൈവ് മത്സരങ്ങൾക്കുള്ള API റൂട്ട്
-app.get("/api/live", async (req, res) => {
-  const key = process.env.APISPORTS_KEY;
-  if (!key) return res.status(503).json({ error: "API key not configured" });
-
-  try {
-    const response = await fetch("https://api-sports.io", {
-      headers: { "x-apisports-key": key }
-    });
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: "Could not fetch live matches" });
-  }
+// 2. Fixtures & Results Route by Date
+app.get('/api/fixtures', async (req, res) => {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: 'Date query parameter is required' });
+    
+    try {
+        const response = await axios.get(`${BASE_URL}/fixtures?date=${date}`, {
+            headers: {
+                'x-apisports-key': API_KEY,
+                'x-rapidapi-host': 'v3.football.api-sports.io'
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("Fixtures API Error:", error.message);
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// വരാനിരിക്കുന്ന മത്സരങ്ങൾക്കുള്ള API റൂട്ട് (തീയതി കൃത്യമാക്കിയത്)
-app.get("/api/fixtures", async (req, res) => {
-  const key = process.env.APISPORTS_KEY;
-  if (!key) return res.status(503).json({ error: "API key not configured" });
-
-  const today = new Date();
-  const nextWeek = new Date();
-  nextWeek.setDate(today.getDate() + 7);
-
-  const fromDate = today.toISOString().split('T')[0];
-  const toDate = nextWeek.toISOString().split('T')[0];
-
-  try {
-    const response = await fetch(`https://api-sports.io{fromDate}&to=${toDate}`, {
-      headers: { "x-apisports-key": key }
-    });
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: "Could not fetch upcoming fixtures" });
-  }
+// 3. Health Check Route
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', message: 'GOALZONE server running perfectly' });
 });
 
-app.use(express.static(__dirname));
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`GOALZONE running on port ${port}`));
+// Render പ്ലാറ്റ്‌ഫോമിന് ആവശ്യമായ പോർട്ട് ക്രമീകരണം
+const PORT = process.env.PORT || 10003;
+app.listen(PORT, () => {
+    console.log(`GOALZONE running on port ${PORT}`);
+});
