@@ -5,13 +5,12 @@ require("dotenv").config();
 
 const app = express();
 
-// public ഫോൾഡറിന് പകരം നേരിട്ട് ഫയലുകൾ കാണിക്കാൻ ഇത് സഹായിക്കും:
-app.use(express.static(__dirname));
-
+// 1. പ്രധാന ഹോം പേജ് കാണിക്കാനുള്ള റൂട്ട് (മറ്റെല്ലാത്തിനും മുൻപ് ഇത് വരണം)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// 2. ലൈവ് മത്സരങ്ങളുടെ വിവരങ്ങൾ എടുക്കാനുള്ള API റൂട്ട്
 app.get("/api/live", async (req, res) => {
   const key = process.env.APISPORTS_KEY;
   if (!key) return res.status(503).json({
@@ -31,7 +30,11 @@ app.get("/api/live", async (req, res) => {
   }
 });
 
+// 3. ഹെൽത്ത് ചെക്ക് റൂട്ട്
 app.get("/api/health", (req, res) => res.json({ ok: true, app: "GOALZONE" }));
+
+// 4. ബാക്കിയുള്ള എല്ലാ സ്റ്റാറ്റിക് ഫയലുകളും (CSS, JS) കാണിക്കാൻ
+app.use(express.static(__dirname));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`GOALZONE running on port ${port}`));
