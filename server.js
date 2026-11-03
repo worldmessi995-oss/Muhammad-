@@ -14,7 +14,10 @@ const API_KEY = process.env.APISPORTS_KEY;
 // ഫുട്ബോൾ API-യുടെ ഒഫീഷ്യൽ ബേസ് യു.ആർ.എൽ ഇവിടെ നൽകിയിരിക്കുന്നു
 const BASE_URL = 'https://v3.football.api-sports.io';
 
-// 1. Live Matches Route
+// പ്രധാന ലീഗുകളുടെ IDs (Premier League, Champions League, La Liga)
+const ALLOWED_LEAGUES = [39, 2, 140];
+
+// 1. Live Matches Route (Filtered for specific leagues)
 app.get('/api/live', async (req, res) => {
     try {
         const response = await axios.get(`${BASE_URL}/fixtures?live=all`, {
@@ -24,13 +27,21 @@ app.get('/api/live', async (req, res) => {
         if (response.data.errors && Object.keys(response.data.errors).length > 0) {
             return res.status(400).json({ error: response.data.errors });
         }
+
+        // പ്രധാന ലീഗുകൾ മാത്രം ഫിൽട്ടർ ചെയ്യുന്നു
+        if (response.data.response) {
+            response.data.response = response.data.response.filter(item => 
+                ALLOWED_LEAGUES.includes(item.league.id)
+            );
+        }
+
         res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// 2. Fixtures By Date Route
+// 2. Fixtures By Date Route (Filtered for specific leagues)
 app.get('/api/fixtures', async (req, res) => {
     const { date } = req.query;
     if (!date) return res.status(400).json({ error: 'Date is required' });
@@ -43,6 +54,14 @@ app.get('/api/fixtures', async (req, res) => {
         if (response.data.errors && Object.keys(response.data.errors).length > 0) {
             return res.status(400).json({ error: response.data.errors });
         }
+
+        // പ്രധാന ലീഗുകൾ മാത്രം ഫിൽട്ടർ ചെയ്യുന്നു
+        if (response.data.response) {
+            response.data.response = response.data.response.filter(item => 
+                ALLOWED_LEAGUES.includes(item.league.id)
+            );
+        }
+
         res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: error.message });
