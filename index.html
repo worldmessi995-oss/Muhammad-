@@ -1,197 +1,298 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOALZONE - Football Match Centre</title>
+    <title>GOALZONE - Premium Football Centre</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --accent-color: #58a6ff;
-            --text-color: #c9d1d9;
-            --live-color: #da3637;
-            --btn-active: #238636;
+            --bg-main: #080c14;
+            --bg-card: #0f1626;
+            --border-color: #1e293b;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent-neon: #00f5d4;
+            --live-red: #ff3b30;
+            --active-green: #10b981;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
-        h1 { color: #ffffff; margin-bottom: 5px; }
-        .subtitle { color: #8b949e; margin-bottom: 20px; }
-        .container { width: 100%; max-width: 600px; }
-        
-        /* Tab Navigation */
-        .tabs {
+        header {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            max-width: 600px;
+            margin: 0 auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+        .logo span { color: var(--accent-neon); }
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+
+        .content-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+        .hero-tag {
+            color: var(--accent-neon);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-size: 40px;
+            margin: 0 0 16px 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+        .hero-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+        .section-title {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 12px;
             margin-bottom: 20px;
         }
-        .tab-btn {
-            background-color: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            padding: 10px 20px;
-            border-radius: 6px;
+        .btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            flex: 1;
+            justify-content: center;
+        }
+        .btn.active {
+            background-color: var(--active-green);
+            color: #000000;
+            border-color: var(--active-green);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--live-red);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .refresh-btn {
+            width: 100%;
+            background-color: #1e293b;
+            border: none;
+            color: var(--text-primary);
+            padding: 14px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 24px;
+            transition: background 0.2s;
         }
-        .tab-btn.active {
-            background-color: var(--btn-active);
-            color: white;
-            border-color: var(--btn-active);
+        .refresh-btn:hover { background-color: #334155; }
+
+        .matches-feed {
+            min-height: 150px;
+        }
+        .status-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
         }
         
         .match-card {
-            background-color: var(--card-bg);
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .match-header {
+        .match-meta {
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            color: #8b949e;
-            border-bottom: 1px solid #30363d;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-        }
-        .live-badge {
-            color: #ffffff;
-            background-color: var(--live-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            animation: blink 1.5s infinite;
-        }
-        .time-badge {
-            color: var(--accent-color);
+            color: var(--text-secondary);
+            margin-bottom: 14px;
             font-weight: 500;
         }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        .teams-container {
+        .match-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+        .team-name {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .score-box {
             font-size: 18px;
-            font-weight: 500;
-        }
-        .team { flex: 1; text-align: center; color: #ffffff; }
-        .score {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--accent-color);
-            padding: 0 20px;
-        }
-        .vs {
-            font-size: 16px;
-            color: #8b949e;
-            padding: 0 20px;
-        }
-        .status-msg {
-            text-align: center;
-            color: #8b949e;
-            padding: 40px;
-            background: var(--card-bg);
+            font-weight: 800;
+            color: var(--accent-neon);
+            letter-spacing: 2px;
+            background: #080c14;
+            padding: 6px 14px;
             border-radius: 8px;
-            border: 1px solid #30363d;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        .vs-box {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            background: #1e293b;
+            padding: 6px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <h1>GOALZONE</h1>
-    <div class="subtitle">Football Match Centre</div>
+    <header>
+        <div class="logo">GOAL<span>ZONE</span></div>
+        <nav>
+            <a href="#" class="active" id="nav-scores" onclick="setMode('live')">Scores</a>
+            <a href="#" id="nav-fixtures" onclick="setMode('upcoming')">Fixtures</a>
+        </nav>
+    </header>
 
-    <div class="tabs">
-        <button class="tab-btn active" id="live-tab" onclick="switchTab('live')">Live Scores</button>
-        <button class="tab-btn" id="fixtures-tab" onclick="switchTab('fixtures')">Upcoming Fixtures</button>
+    <div class="content-wrapper">
+        <div class="hero-tag">The Football Live Centre</div>
+        <h1>Follow every moment.</h1>
+        <div class="hero-desc">Live match scores, upcoming fixtures and completed results from leagues around the world.</div>
+
+        <div class="section-title">Match Centre</div>
+        
+        <div class="filter-group">
+            <button class="btn active" id="live-btn" onclick="setMode('live')"><span class="live-dot"></span> Live</button>
+            <button class="btn" id="upcoming-btn" onclick="setMode('upcoming')">Upcoming</button>
+        </div>
+
+        <button class="refresh-btn" onclick="loadMatches()">Public Refresh Match Centre</button>
+
+        <div class="matches-feed" id="matches-list">
+            <div class="status-box">Connecting to server...</div>
+        </div>
     </div>
 
-    <div class="container" id="match-list">
-        <div class="status-msg">Loading matches...</div>
-    </div>
+    <footer>
+        <p>GOALZONE is an independent football statistics aggregator. Live data is configured dynamically via authoritative pipelines.</p>
+        <p>© 2026 GOALZONE · Premium Football Live Centre</p>
+    </footer>
 
     <script>
-        let currentTab = 'live';
+        let mode = 'live';
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.getElementById('live-tab').classList.toggle('active', tab === 'live');
-            document.getElementById('fixtures-tab').classList.toggle('active', tab === 'fixtures');
-            loadData();
+        function setMode(newMode) {
+            mode = newMode;
+            document.getElementById('live-btn').classList.toggle('active', mode === 'live');
+            document.getElementById('upcoming-btn').classList.toggle('active', mode === 'upcoming');
+            
+            document.getElementById('nav-scores').classList.toggle('active', mode === 'live');
+            document.getElementById('nav-fixtures').classList.toggle('active', mode === 'upcoming');
+            
+            loadMatches();
         }
 
-        async function loadData() {
-            const container = document.getElementById('match-list');
-            container.innerHTML = '<div class="status-msg">Updating...</div>';
-            
+        async function loadMatches() {
+            const list = document.getElementById('matches-list');
+            list.innerHTML = '<div class="status-box">Fetching latest updates...</div>';
+
             try {
-                const endpoint = currentTab === 'live' ? '/api/live' : '/api/fixtures';
+                const endpoint = mode === 'upcoming' ? '/api/fixtures' : '/api/live';
                 const response = await fetch(endpoint);
                 const data = await response.json();
 
                 if (!response.ok || !data.response || data.response.length === 0) {
-                    container.innerHTML = `<div class="status-msg">No ${currentTab} matches available at the moment.</div>`;
+                    if (mode === 'live') {
+                        list.innerHTML = '<div class="status-box">No live matches active right now. Check back during game hours!</div>';
+                    } else {
+                        list.innerHTML = '<div class="status-box">No upcoming fixtures scheduled for the next 7 days.</div>';
+                    }
                     return;
                 }
 
-                container.innerHTML = '';
+                list.innerHTML = '';
 
-                data.response.slice(0, 50).forEach(match => { // പരമാവധി 50 മത്സരങ്ങൾ കാണിക്കുന്നു
-                    const fixture = match.fixture;
-                    const teams = match.teams;
-                    const goals = match.goals;
-
+                data.response.slice(0, 40).forEach(match => {
                     const card = document.createElement('div');
                     card.className = 'match-card';
+                    
+                    let rightMeta = '';
+                    let centerStatusHTML = '';
 
-                    let statusHTML = '';
-                    let middleHTML = '';
-
-                    if (currentTab === 'live') {
-                        statusHTML = `<span class="live-badge">${fixture.status.elapsed}'</span>`;
-                        middleHTML = `<div class="score">${goals.home ?? 0} - ${goals.away ?? 0}</div>`;
+                    if (mode === 'live') {
+                        rightMeta = `<span style="color:var(--live-red); font-weight:700;">LIVE · ${match.fixture.status.elapsed}'</span>`;
+                        centerStatusHTML = `<div class="score-box">${match.goals.home ?? 0} - ${match.goals.away ?? 0}</div>`;
                     } else {
-                        const matchDate = new Date(fixture.date).toLocaleString('ml-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
-                        statusHTML = `<span class="time-badge">${fixture.status.short}</span>`;
-                        middleHTML = `<div class="vs"><div>VS</div><div style="font-size:11px; margin-top:5px; color:#8b949e;">${matchDate}</div></div>`;
-                    }
-
-                    card.innerHTML = `
-                        <div class="match-header">
-                            <span>${match.league.name} (${match.league.country})</span>
-                            ${statusHTML}
-                        </div>
-                        <div class="teams-container">
-                            <div class="team">${teams.home.name}</div>
-                            ${middleHTML}
-                            <div class="team">${teams.away.name}</div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                container.innerHTML = '<div class="status-msg" style="color: #da3637;">Could not load data. Please check configuration.</div>';
-            }
-        }
-
-        loadData();
-        // ഓരോ 1 മിനിറ്റിലും ഓട്ടോമാറ്റിക് റിഫ്രഷ്
-        setInterval(() => {
-            if(currentTab === 'live') loadData();
-        }, 60000);
-    </script>
-</body>
-</html>
+        
