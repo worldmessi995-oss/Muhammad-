@@ -168,7 +168,6 @@
         const BACKEND_URL = 'https://onrender.com';
         let currentFilter = 'all';
 
-        // തീയതി ഇന്ത്യൻ സമയത്തിനനുസരിച്ച് (Local Time) ഇൻപുട്ടിൽ സെറ്റ് ചെയ്യാൻ
         const localDate = new Date();
         const offset = localDate.getTimezoneOffset();
         const adjustedDate = new Date(localDate.getTime() - (offset * 60 * 1000));
@@ -197,7 +196,6 @@
 
             const selectedDate = document.getElementById('match-date').value;
             
-            // ഫിൽട്ടർ 'live' ആണെങ്കിൽ ലൈവ് റൂട്ടും, മറ്റുള്ളവയ്ക്ക് ഡേറ്റ് അടിസ്ഥാനമാക്കിയുള്ള റൂട്ടും വിളിക്കുന്നു
             let url = `${BACKEND_URL}/api/fixtures?date=${selectedDate}`;
             if (currentFilter === 'live') {
                 url = `${BACKEND_URL}/api/live`;
@@ -221,7 +219,6 @@
 
                 let filteredResponse = data.response;
 
-                // ഫിൽട്ടർ അനുസരിച്ച് ഡാറ്റ തരംതിരിക്കുന്നു (ലൈവ് റൂട്ട് അല്ലാത്തപ്പോൾ മാത്രം)
                 if (currentFilter !== 'live') {
                     if (currentFilter === 'finished') {
                         filteredResponse = data.response.filter(item => item.fixture.status.short === 'FT');
@@ -244,7 +241,6 @@
                     const awayScore = goals.away !== null ? goals.away : '-';
 
                     let statusHTML = '';
-                    // മത്സരം നടന്നുകൊണ്ടിരിക്കുകയാണെങ്കിൽ (Live) മിനിറ്റ് കാണിക്കാൻ
                     if (fixture.status.short !== 'NS' && fixture.status.short !== 'FT') {
                         statusHTML = `<div class="live-badge">${fixture.status.elapsed}'</div>`;
                     } else {
@@ -271,8 +267,11 @@
             }
         }
 
-        // പേജ് ആദ്യ തവണ ലോഡ് ആകുമ്പോൾ ഡാറ്റ കാണിക്കാൻ
         fetchData();
 
-        // ലൈവ് ടാബിൽ ആണെങ്കിൽ ഓരോ 30 സെക്കൻഡിലും ഓട്ടോമാറ്റിക് ആയി റിഫ്രഷ് ചെയ്യും
-        
+        setInterval(() => {
+            if (currentFilter === 'live') fetchData();
+        }, 30000);
+    </script>
+</body>
+</html>
