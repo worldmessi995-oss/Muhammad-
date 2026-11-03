@@ -25,20 +25,21 @@ app.get("/api/live", async (req, res) => {
   }
 });
 
-// 2. വരാനിരിക്കുന്ന മത്സരങ്ങൾക്കുള്ള API റൂട്ട് (അടുത്ത 7 ദിവസത്തെ മത്സരങ്ങൾ)
+// 2. വരാനിരിക്കുന്ന മത്സരങ്ങൾക്കുള്ള API റൂട്ട് (തീയതി കൃത്യമാക്കിയത്)
 app.get("/api/fixtures", async (req, res) => {
   const key = process.env.APISPORTS_KEY;
   if (!key) return res.status(503).json({ error: "API key not configured" });
 
-  // ഇന്നത്തെ തീയതിയും അടുത്ത 7 ദിവസത്തെ തീയതിയും കണക്കാക്കുന്നു (YYYY-MM-DD)
   const today = new Date();
   const nextWeek = new Date();
   nextWeek.setDate(today.getDate() + 7);
 
-  const formatDate = (date) => date.toISOString().split('T')[0];
+  // YYYY-MM-DD ഫോർമാറ്റിലേക്ക് മാറ്റുന്നു
+  const fromDate = today.toISOString().split('T')[0];
+  const toDate = nextWeek.toISOString().split('T')[0];
 
   try {
-    const response = await fetch(`https://api-sports.io{formatDate(today)}&to=${formatDate(nextWeek)}`, {
+    const response = await fetch(`https://api-sports.io{fromDate}&to=${toDate}`, {
       headers: { "x-apisports-key": key }
     });
     const data = await response.json();
