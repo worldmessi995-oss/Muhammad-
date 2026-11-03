@@ -107,6 +107,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+        }
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
         .team { font-weight: 600; width: 40%; }
         .team.home { text-align: right; }
@@ -133,6 +140,22 @@
             color: var(--text-muted);
             display: block;
             margin-top: 3px;
+        }
+        .watch-btn {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .watch-btn:hover {
+            opacity: 0.8;
         }
         @keyframes blink { 50% { opacity: 0.5; } }
     </style>
@@ -167,6 +190,9 @@
     <script>
         const BACKEND_URL = 'https://onrender.com';
         let currentFilter = 'all';
+
+        // സ്‌പോർട്സ് ട്രാക്ക് ലിങ്ക് ചേർത്തിരിക്കുന്നു
+        const SPORTS_TRACK_LINK = 'https://www.sportstrack.lat';
 
         const localDate = new Date();
         const offset = localDate.getTimezoneOffset();
@@ -250,12 +276,15 @@
                     const card = document.createElement('div');
                     card.className = 'match-card';
                     card.innerHTML = `
-                        <div class="team home">${teams.home.name}</div>
-                        <div class="score">
-                            ${statusHTML}
-                            <div>${homeScore} - ${awayScore}</div>
+                        <div class="match-info">
+                            <div class="team home">${teams.home.name}</div>
+                            <div class="score">
+                                ${statusHTML}
+                                <div>${homeScore} - ${awayScore}</div>
+                            </div>
+                            <div class="team away">${teams.away.name}</div>
                         </div>
-                        <div class="team away">${teams.away.name}</div>
+                        <a href="${SPORTS_TRACK_LINK}" target="_blank" class="watch-btn">📺 Watch Live / Play</a>
                     `;
                     matchList.appendChild(card);
                 });
