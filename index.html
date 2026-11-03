@@ -1,121 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ml">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080d18">
-<meta name="description" content="GOALZONE football live scores, fixtures and results.">
-<title>GOALZONE — Football Live Centre</title>
-<style>
-:root{--bg:#080d18;--panel:#111b2b;--panel2:#172338;--line:#26364d;--txt:#f5f7fb;--muted:#9eabc0;--lime:#b9f34b;--red:#ff626b;--gold:#f6c85f}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1c3150 0,transparent 48%),var(--bg);color:var(--txt);font-family:Inter,Arial,sans-serif}
-header{height:68px;padding:0 max(5%,calc((100% - 1120px)/2));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#080d18ed;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
-.logo{font-weight:950;font-size:24px;letter-spacing:-1px}.logo span{color:var(--lime)}nav{display:flex;gap:20px}nav a{color:var(--muted);text-decoration:none;font-size:13px}nav a:hover{color:var(--lime)}
-main{max-width:1120px;margin:auto;padding:0 20px}.hero{padding:48px 0 26px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--lime);font-weight:900}.hero h1{font-size:clamp(34px,6vw,56px);letter-spacing:-2px;margin:12px 0}.hero p{color:var(--muted);line-height:1.6;max-width:620px;margin:0}
-.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:22px 0 14px}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab,.refresh,.date{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:10px 14px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer}.tab.active{background:var(--lime);border-color:var(--lime);color:#101809}.refresh{color:var(--txt)}.date{color:var(--txt);font-family:inherit}
-.statusline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin:12px 0 18px;min-height:16px}.dot{width:7px;height:7px;border-radius:50%;background:var(--lime);display:inline-block}.dot.error{background:var(--red)}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.match{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}.matchtop{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;gap:10px}.league{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.live{color:var(--red);font-weight:950;letter-spacing:1px}.teams{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;margin:18px 0}.team{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px;min-width:0}.team:last-child{justify-content:flex-end;text-align:right}.team span{overflow-wrap:anywhere}.team img{width:25px;height:25px;object-fit:contain;flex:0 0 25px}.score{font-size:25px;font-weight:950;white-space:nowrap}.meta{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:12px}.empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:30px;text-align:center;color:var(--muted);grid-column:1/-1;line-height:1.6}.note{font-size:11px;color:var(--muted);line-height:1.7;margin:26px 0 40px}.note strong{color:var(--gold)}footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var(--muted);font-size:11px}
-@media(max-width:650px){header{padding:0 16px}nav{gap:12px}nav a{font-size:11px}.cards{grid-template-columns:1fr}.hero{padding-top:36px}.toolbar{align-items:flex-start}.date{width:100%}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOALZONE - Live Football Scores</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #58a6ff;
+            --text-color: #c9d1d9;
+            --live-color: #da3637;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { color: #ffffff; margin-bottom: 5px; }
+        .subtitle { color: #8b949e; margin-bottom: 20px; }
+        .container { width: 100%; max-width: 600px; }
+        .match-card {
+            background-color: var(--card-bg);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8b949e;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .live-badge {
+            color: #ffffff;
+            background-color: var(--live-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        .teams-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .team { flex: 1; text-align: center; color: #ffffff; }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 0 20px;
+        }
+        .status-msg {
+            text-align: center;
+            color: #8b949e;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+        .refresh-btn {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .refresh-btn:hover { background-color: #30363d; }
+    </style>
 </head>
 <body>
-<header><div class="logo">GOAL<span>ZONE</span></div><nav><a href="#scores">Scores</a><a href="#scores">Fixtures</a><a href="#about">About</a></nav></header>
-<main>
-<section class="hero"><div class="eyebrow">THE FOOTBALL LIVE CENTRE</div><h1>Follow every <span style="color:var(--lime)">moment.</span></h1><p>Live match scores, upcoming fixtures and completed results from football leagues around the world.</p></section>
-<section id="scores">
-<div class="eyebrow">MATCH CENTRE</div>
-<div class="toolbar">
- <div class="tabs">
-  <button class="tab active" data-view="live">🔴 Live</button>
-  <button class="tab" data-view="fixtures">Upcoming</button>
-  <button class="tab" data-view="results">Results</button>
- </div>
- <div style="display:flex;gap:8px;flex-wrap:wrap">
-  <input class="date" id="match-date" type="date" aria-label="Choose match date">
-  <button class="refresh" id="refresh">↻ Refresh</button>
- </div>
-</div>
-<div class="statusline"><span class="dot" id="dot"></span><span id="status">Connecting to football data…</span></div>
-<div class="cards" id="match-list"><div class="empty">Loading match data…</div></div>
-</section>
-<section id="about" class="note"><strong>GOALZONE:</strong> Match information is supplied by API-FOOTBALL. Coverage and update speed depend on the competition and your API plan. Some competitions may not provide live coverage. GOALZONE is an independent project and is not affiliated with any football league or club.</section>
-</main>
-<footer>© <span id="year"></span> GOALZONE · Football Live Centre</footer>
-<script>
-const $ = id => document.getElementById(id);
-let view = "live";
-const today = new Date();
-const localDate = new Date(today.getTime() - today.getTimezoneOffset()*60000).toISOString().slice(0,10);
-$("match-date").value = localDate;
-$("year").textContent = new Date().getFullYear();
 
-function esc(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function timeLabel(item){
- const status=item.fixture?.status || {};
- if(status.elapsed != null) return `${status.elapsed}${status.extra ? "+"+status.extra : ""}'`;
- if(status.short==="FT") return "Full time";
- if(status.short==="AET") return "After extra time";
- if(status.short==="PEN") return "Penalties";
- const date=item.fixture?.date;
- return date ? new Date(date).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}) : "Time TBA";
-}
-function matchCard(item){
- const league=item.league?.name || "Football";
- const home=item.teams?.home || {}, away=item.teams?.away || {};
- const status=item.fixture?.status || {};
- const live=["1H","HT","2H","ET","P","LIVE","BT"].includes(status.short);
- const scheduled=["NS","TBD"].includes(status.short);
- const score=scheduled ? "—" : `${item.goals?.home ?? 0} : ${item.goals?.away ?? 0}`;
- const state=live ? "LIVE" : (status.long || status.short || "MATCH");
- const cls=live?"live":"";
- return `<article class="match">
-  <div class="matchtop"><span class="league">${esc(league)}${item.league?.round ? " · "+esc(item.league.round):""}</span><span class="${cls}">${esc(state)}</span></div>
-  <div class="teams">
-   <div class="team">${home.logo?`<img src="${esc(home.logo)}" alt="" loading="lazy">`:""}<span>${esc(home.name||"Home")}</span></div>
-   <div class="score">${esc(score)}</div>
-   <div class="team">${away.logo?`<img src="${esc(away.logo)}" alt="" loading="lazy">`:""}<span>${esc(away.name||"Away")}</span></div>
-  </div>
-  <div class="meta"><span>${esc(item.fixture?.venue?.name || "Football")}</span><span>${esc(timeLabel(item))}</span></div>
- </article>`;
-}
-async function load(){
- const date=$("match-date").value || localDate;
- $("status").textContent="Loading real match data…";
- $("dot").classList.remove("error");
- $("match-list").innerHTML='<div class="empty">Loading…</div>';
- let endpoint=view==="live"?"/api/live":`/api/${view}?date=${encodeURIComponent(date)}`;
- try{
-  const response=await fetch(endpoint,{headers:{Accept:"application/json"}});
-  const data=await response.json();
-  if(!response.ok) throw new Error(data.message || data.error || "Could not load match data.");
-  const matches=Array.isArray(data.response)?data.response:[];
-  if(view==="fixtures"){
-   const upcoming=matches.filter(m=>["NS","TBD"].includes(m.fixture?.status?.short));
-   render(upcoming);
-   $("status").textContent=`Upcoming matches for ${date} · India time`;
-  }else if(view==="results"){
-   render(matches);
-   $("status").textContent=`Completed results for ${date} · India time`;
-  }else{
-   render(matches);
-   $("status").textContent=`Live matches right now · Auto refresh every 30 seconds`;
-  }
- }catch(error){
-  $("dot").classList.add("error");
-  $("status").textContent=error.message;
-  $("match-list").innerHTML='<div class="empty">Live data is not available. Check that the server is running and your API key is configured in the server environment.</div>';
- }
-}
-function render(matches){
- $("match-list").innerHTML=matches.length?matches.map(matchCard).join(""):'<div class="empty">No matches found for this selection.<br>Try another date or check again later.</div>';
-}
-document.querySelectorAll(".tab").forEach(button=>button.addEventListener("click",()=>{
- document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
- button.classList.add("active");view=button.dataset.view;load();
-}));
-$("refresh").addEventListener("click",load);
-$("match-date").addEventListener("change",()=>{if(view!=="live")load();});
-load();
-setInterval(()=>{if(view==="live")load();},30000);
-</script>
-</body></html>
+    <h1>GOALZONE</h1>
+    <div class="subtitle">Live Football Match Centre</div>
+
+    <button class="refresh-btn" onclick="fetchLiveScores()">Refresh Scores</button>
+
+    <div class="container" id="match-list">
+        <div class="status-msg">Loading live matches...</div>
+    </div>
+
+    <script>
+        async function fetchLiveScores() {
+            const container = document.getElementById('match-list');
+            container.innerHTML = '<div class="status-msg">Updating scores...</div>';
+            
+            try {
+                // വെബ്സൈറ്റ് റൺ ചെയ്യുന്ന അതേ സെർവറിലെ API റൂട്ടിലേക്ക് കണക്റ്റ് ചെയ്യുന്നു
+                const response = await fetch('/api/live');
+                const data = await response.json();
+
+                if (!response.ok || !data.response || data.response.length === 0) {
+                    container.innerHTML = '<div class="status-msg">No live matches available at the moment.</div>';
+                    return;
+                }
+
+                container.innerHTML = ''; // പഴയ വിവരങ്ങൾ മാറ്റുന്നു
+
+                data.response.forEach(match => {
+                    const fixture = match.fixture;
+                    const teams = match.teams;
+                    const goals = match.goals;
+
+                    const card = document.createElement('div');
+                    card.className = 'match-card';
+                    card.innerHTML = `
+                        <div class="match-header">
+                            <span>${match.league.name} (${match.league.country})</span>
+                            <span class="live-badge">${fixture.status.elapsed}'</span>
+                        </div>
+                        <div class="teams-container">
+                            <div class="team">${teams.home.name}</div>
+                            <div class="score">${goals.home ?? 0} - ${goals. Caring ?? 0}</div>
+                            <div class="team">${teams.away.name}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="status-msg" style="color: #da3637;">Could not fetch live matches. Please check your API configuration or quota.</div>';
+            }
+        }
+
+        // പേജ് ലോഡ് ചെയ്യുമ്പോൾ തനിയെ റൺ ആകാൻ
+        fetchLiveScores();
+        // ഓരോ 1 മിനിറ്റിലും സ്വയം അപ്ഡേറ്റ് ആകാൻ
+        setInterval(fetchLiveScores, 60000);
+    </script>
+</body>
+</html>
