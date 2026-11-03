@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOALZONE - Live Football Centre</title>
+    <title>GOALZONE — Live Football</title>
     <style>
         :root {
             --bg-dark: #0b0f19;
@@ -28,6 +28,18 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+        .nav-links {
+            margin: 15px 0 30px 0;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        .nav-links a.active {
+            color: var(--accent);
+        }
         .subtitle {
             color: var(--text-muted);
             font-size: 16px;
@@ -35,16 +47,20 @@
         }
         .controls {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .btn {
             background-color: var(--bg-card);
             color: var(--text-main);
             border: 2px solid #23314f;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 14px;
             border-radius: 25px;
             cursor: pointer;
-            margin: 5px;
             transition: all 0.3s ease;
         }
         .btn.active {
@@ -53,13 +69,20 @@
             border-color: var(--accent);
             font-weight: bold;
         }
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
         .date-picker {
             background-color: var(--bg-card);
             color: var(--text-main);
             border: 2px solid #23314f;
             padding: 8px 15px;
             border-radius: 20px;
-            margin-left: 10px;
             outline: none;
         }
         .match-container {
@@ -89,7 +112,7 @@
         .team.home { text-align: right; }
         .team.away { text-align: left; }
         .score {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--accent);
             width: 20%;
@@ -97,26 +120,43 @@
         .live-badge {
             background: #ff4a4a;
             color: white;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             animation: blink 1.5s infinite;
+        }
+        .status-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 3px;
         }
         @keyframes blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
-    <div class="header">GOALZONE</div>
-    <div class="subtitle">The Football Live Centre - Live scores and upcoming fixtures</div>
+    <div class="header">GOAL ZONE</div>
+    <div class="nav-links">
+        <a href="#" class="active">Live Scores</a>
+        <a href="#">Fixtures</a>
+        <a href="#">About</a>
+    </div>
+
+    <h2>THE FOOTBALL LIVE CENTRE</h2>
+    <div class="subtitle">Live match scores, fixtures and football updates from leagues around the world.</div>
 
     <div class="controls">
-        <button id="btn-live" class="btn active" onclick="switchTab('live')">● Live</button>
-        <button id="btn-upcoming" class="btn" onclick="switchTab('upcoming')">Upcoming / Results</button>
-        <input type="date" id="match-date" class="date-picker" onchange="onDateChange()" style="display: none;">
+        <button id="btn-all" class="btn active" onclick="filterMatches('all')">All</button>
+        <button id="btn-live" class="btn" onclick="filterMatches('live')">🔴 Live</button>
+        <button id="btn-finished" class="btn" onclick="filterMatches('finished')">Finished</button>
+        <button id="btn-upcoming" class="btn" onclick="filterMatches('upcoming')">Upcoming</button>
+        
+        <input type="date" id="match-date" class="date-picker" onchange="onDateChange()">
+        <button class="refresh-btn" onclick="fetchData()" title="Refresh">↻ Refresh</button>
     </div>
 
     <div class="match-container" id="match-centre">
@@ -125,26 +165,26 @@
     </div>
 
     <script>
-        // നിങ്ങളുടെ ശരിക്കുമുള്ള Render ബാക്കെൻഡ് URL ലിങ്ക് ഇവിടെ നൽകിയിരിക്കുന്നു
-        const BACKEND_URL = 'https://muhammad-c5sn.onrender.com';
-        let currentTab = 'live';
+        const BACKEND_URL = 'https://onrender.com';
+        let currentFilter = 'all';
 
-        // ഇന്ന് എത് ദിവസമാണെന്ന് ഇൻപുട്ടിൽ സെറ്റ് ചെയ്യാൻ
-        document.getElementById('match-date').value = new Date().toISOString().split('T')[0];
+        // തീയതി ഇന്ത്യൻ സമയത്തിനനുസരിച്ച് (Local Time) ഇൻപുട്ടിൽ സെറ്റ് ചെയ്യാൻ
+        const localDate = new Date();
+        const offset = localDate.getTimezoneOffset();
+        const adjustedDate = new Date(localDate.getTime() - (offset * 60 * 1000));
+        document.getElementById('match-date').value = adjustedDate.toISOString().split('T')[0];
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.getElementById('btn-live').classList.toggle('active', tab === 'live');
-            document.getElementById('btn-upcoming').classList.toggle('active', tab === 'upcoming');
-            document.getElementById('match-date').style.display = tab === 'upcoming' ? 'inline-block' : 'none';
-            
+        function filterMatches(filterType) {
+            currentFilter = filterType;
+            const buttons = ['all', 'live', 'finished', 'upcoming'];
+            buttons.forEach(b => {
+                document.getElementById(`btn-${b}`).classList.toggle('active', b === filterType);
+            });
             fetchData();
         }
 
         function onDateChange() {
-            if (currentTab === 'upcoming') {
-                fetchData();
-            }
+            fetchData();
         }
 
         async function fetchData() {
@@ -155,10 +195,12 @@
             statusText.innerText = "Loading matches...";
             matchList.innerHTML = '';
 
-            let url = `${BACKEND_URL}/api/live`;
-            if (currentTab === 'upcoming') {
-                const selectedDate = document.getElementById('match-date').value;
-                url = `${BACKEND_URL}/api/fixtures?date=${selectedDate}`;
+            const selectedDate = document.getElementById('match-date').value;
+            
+            // ഫിൽട്ടർ 'live' ആണെങ്കിൽ ലൈവ് റൂട്ടും, മറ്റുള്ളവയ്ക്ക് ഡേറ്റ് അടിസ്ഥാനമാക്കിയുള്ള റൂട്ടും വിളിക്കുന്നു
+            let url = `${BACKEND_URL}/api/fixtures?date=${selectedDate}`;
+            if (currentFilter === 'live') {
+                url = `${BACKEND_URL}/api/live`;
             }
 
             try {
@@ -167,12 +209,33 @@
                 
                 statusText.style.display = 'none';
 
+                if (data.error) {
+                    matchList.innerHTML = `<div class="status-message">API Error: ${JSON.stringify(data.error)}</div>`;
+                    return;
+                }
+
                 if (!data.response || data.response.length === 0) {
                     matchList.innerHTML = `<div class="status-message">No matches found for this selection.</div>`;
                     return;
                 }
 
-                data.response.forEach(item => {
+                let filteredResponse = data.response;
+
+                // ഫിൽട്ടർ അനുസരിച്ച് ഡാറ്റ തരംതിരിക്കുന്നു (ലൈവ് റൂട്ട് അല്ലാത്തപ്പോൾ മാത്രം)
+                if (currentFilter !== 'live') {
+                    if (currentFilter === 'finished') {
+                        filteredResponse = data.response.filter(item => item.fixture.status.short === 'FT');
+                    } else if (currentFilter === 'upcoming') {
+                        filteredResponse = data.response.filter(item => item.fixture.status.short === 'NS');
+                    }
+                }
+
+                if (filteredResponse.length === 0) {
+                    matchList.innerHTML = `<div class="status-message">No matches match the active filter.</div>`;
+                    return;
+                }
+
+                filteredResponse.forEach(item => {
                     const fixture = item.fixture;
                     const teams = item.teams;
                     const goals = item.goals;
@@ -180,9 +243,12 @@
                     const homeScore = goals.home !== null ? goals.home : '-';
                     const awayScore = goals.away !== null ? goals.away : '-';
 
-                    let liveBadgeHTML = '';
+                    let statusHTML = '';
+                    // മത്സരം നടന്നുകൊണ്ടിരിക്കുകയാണെങ്കിൽ (Live) മിനിറ്റ് കാണിക്കാൻ
                     if (fixture.status.short !== 'NS' && fixture.status.short !== 'FT') {
-                        liveBadgeHTML = `<div class="live-badge">${fixture.status.elapsed}'</div>`;
+                        statusHTML = `<div class="live-badge">${fixture.status.elapsed}'</div>`;
+                    } else {
+                        statusHTML = `<span class="status-tag">${fixture.status.short}</span>`;
                     }
 
                     const card = document.createElement('div');
@@ -190,7 +256,7 @@
                     card.innerHTML = `
                         <div class="team home">${teams.home.name}</div>
                         <div class="score">
-                            ${liveBadgeHTML}
+                            ${statusHTML}
                             <div>${homeScore} - ${awayScore}</div>
                         </div>
                         <div class="team away">${teams.away.name}</div>
@@ -201,16 +267,12 @@
             } catch (error) {
                 console.error("Error fetching data:", error);
                 statusText.style.display = 'block';
-                statusText.innerText = "Failed to connect to server. Please try again.";
+                statusText.innerText = "Failed to connect to server.";
             }
         }
 
-        // ആദ്യ തവണ ലോഡ് ചെയ്യുമ്പോൾ റൺ ചെയ്യാൻ
+        // പേജ് ആദ്യ തവണ ലോഡ് ആകുമ്പോൾ ഡാറ്റ കാണിക്കാൻ
         fetchData();
-        // ലൈവ് സ്കോറുകൾക്കായി ഓരോ 30 സെക്കൻഡിലും ഓട്ടോമാറ്റിക് റിഫ്രഷ് ചെയ്യും
-        setInterval(() => {
-            if (currentTab === 'live') fetchData();
-        }, 30000);
-    </script>
-</body>
-</html>
+
+        // ലൈവ് ടാബിൽ ആണെങ്കിൽ ഓരോ 30 സെക്കൻഡിലും ഓട്ടോമാറ്റിക് ആയി റിഫ്രഷ് ചെയ്യും
+        
