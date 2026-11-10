@@ -9,8 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Public ഫോൾഡറിലെ ഫ്രണ്ട്എൻഡ് ഫയലുകൾ (index.html) സെർവ് ചെയ്യുന്നു
-app.use(express.static(path.join(__dirname, )));
+// Static files (index.html) സെർവ് ചെയ്യുന്നു
+app.use(express.static(path.join(__dirname)));
 
 const API_KEY = process.env.APISPORTS_KEY;
 const BASE_URL = 'https://v3.football.api-sports.io';
@@ -30,11 +30,12 @@ app.get('/api/live', async (req, res) => {
         }
 
         const responseData = response.data.response;
+        // പ്രധാന ലീഗുകൾ മാത്രം ഫിൽട്ടർ ചെയ്യുന്നു
         const filteredData = responseData.filter(item => 
             ALLOWED_LEAGUES.includes(item.league.id)
         );
 
-        res.json(responseData);
+        res.json(filteredData);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -55,11 +56,12 @@ app.get('/api/fixtures', async (req, res) => {
         }
 
         const responseData = response.data.response;
+        // പ്രധാന ലീഗുകൾ മാത്രം ഫിൽട്ടർ ചെയ്യുന്നു
         const filteredData = responseData.filter(item => 
             ALLOWED_LEAGUES.includes(item.league.id)
         );
 
-        res.json(responseData);
+        res.json(filteredData);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
