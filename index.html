@@ -150,7 +150,7 @@
 
         .watch-box {
             text-align: center;
-            margin-top: 15px;
+            margin: 15px 0;
         }
 
         .watch-box a {
@@ -187,7 +187,7 @@
     </div>
 
     <div class="watch-box">
-        <p>✨ Live Streams: <a href="https://sports-track.link/new" target="_blank">SportsTrack</a></p>
+        <p>✨ Live Streams: <a href="https://www.rd9sports.pro/?m=1" target="_blank">RD9 Sports Live</a></p>
     </div>
 
     <div id="match-list" class="match-list">
@@ -256,7 +256,7 @@
             let filtered = matchesData.filter(item => {
                 const status = item.fixture.status.short;
                 if (currentFilter === 'live') return ['1H', 'HT', '2H', 'ET', 'P'].includes(status);
-                if (currentFilter === 'finished') return ['FT', 'AET', 'PEN'].includes(status);
+                if, (currentFilter === 'finished') return ['FT', 'AET', 'PEN'].includes(status);
                 if (currentFilter === 'upcoming') return ['NS', 'TBD'].includes(status);
                 return true;
             });
