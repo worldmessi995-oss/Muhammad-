@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Public ഫോൾഡറിലെ ഫ്രണ്ട്എൻഡ് ഫയലുകൾ (index.html) സെർവ് ചെയ്യുന്നു
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, )));
 
 const API_KEY = process.env.APISPORTS_KEY;
 const BASE_URL = 'https://v3.football.api-sports.io';
