@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const API_KEY = process.env.APISPORTS_KEY;
 const BASE_URL = 'https://v3.football.api-sports.io';
