@@ -3,304 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOALZONE — Live Football</title>
+    <title>GOALZONE - Live Football</title>
     <style>
         :root {
-            --bg-dark: #0b0f19;
-            --bg-card: #151d30;
-            --accent: #00ffcc;
+            --bg-dark: #0a0e17;
+            --bg-card: #151c28;
+            --accent: #00ff87;
             --text-main: #ffffff;
-            --text-muted: #8fa0bc;
+            --text-muted: #8f9cae;
         }
+
         body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
             padding: 20px;
-            text-align: center;
         }
+
         .header {
-            font-size: 32px;
-            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .header h1 {
             color: var(--accent);
-            margin-top: 20px;
-            text-transform: uppercase;
+            margin: 0;
             letter-spacing: 2px;
         }
-        .nav-links {
-            margin: 15px 0 30px 0;
-        }
-        .nav-links a {
+
+        .header p {
             color: var(--text-muted);
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
-        .nav-links a.active {
-            color: var(--accent);
-        }
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
+
         .controls {
-            margin-bottom: 20px;
+            max-width: 800px;
+            margin: 20px auto;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
         }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
         .btn {
             background-color: var(--bg-card);
             color: var(--text-main);
-            border: 2px solid #23314f;
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 25px;
+            border: 1px solid #2d3748;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
+
         .btn.active {
             background-color: var(--accent);
             color: var(--bg-dark);
             border-color: var(--accent);
             font-weight: bold;
         }
+
         .refresh-btn {
-            background: none;
-            border: none;
+            background-color: transparent;
             color: var(--accent);
-            font-size: 20px;
+            border: none;
             cursor: pointer;
-            padding: 5px 10px;
+            font-size: 1em;
         }
+
         .date-picker {
             background-color: var(--bg-card);
             color: var(--text-main);
-            border: 2px solid #23314f;
-            padding: 8px 15px;
-            border-radius: 20px;
+            border: 1px solid #2d3748;
+            padding: 8px 12px;
+            border-radius: 8px;
             outline: none;
         }
-        .match-container {
-            max-width: 600px;
+
+        .match-list {
+            max-width: 800px;
             margin: 0 auto;
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            min-height: 150px;
         }
-        .status-message {
-            color: var(--text-muted);
-            font-size: 18px;
-            padding: 20px;
-        }
+
         .match-card {
-            background: #1c263f;
+            background-color: var(--bg-card);
+            border-radius: 10px;
             padding: 15px;
-            border-radius: 8px;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 10px;
         }
-        .match-info {
+
+        .team-info {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            width: 100%;
+            gap: 10px;
+            width: 40%;
         }
-        .team { font-weight: 600; width: 40%; }
-        .team.home { text-align: right; }
-        .team.away { text-align: left; }
-        .score {
-            font-size: 18px;
+
+        .team-info.away {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .team-logo {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .team-name {
+            font-weight: 500;
+        }
+
+        .score-info {
+            text-align: center;
+            font-size: 1.2em;
             font-weight: bold;
-            color: var(--accent);
-            width: 20%;
         }
-        .live-badge {
-            background: #ff4a4a;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 5px;
-            animation: blink 1.5s infinite;
-        }
-        .status-tag {
-            font-size: 11px;
+
+        .status-badge {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: #2d3748;
             color: var(--text-muted);
-            display: block;
-            margin-top: 3px;
+            margin-top: 5px;
+            display: inline-block;
         }
-        .watch-btn {
-            display: block;
-            width: 100%;
-            margin-top: 10px;
-            background-color: var(--accent);
-            color: var(--bg-dark);
+
+        .status-badge.live {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .watch-box {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .watch-box a {
+            color: var(--accent);
             text-decoration: none;
-            padding: 8px;
-            border-radius: 5px;
             font-weight: bold;
-            font-size: 13px;
-            transition: 0.2s;
         }
-        .watch-btn:hover {
-            opacity: 0.8;
+
+        .status-text {
+            text-align: center;
+            color: var(--text-muted);
+            margin: 40px 0;
         }
-        @keyframes blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
-    <div class="header">GOAL ZONE</div>
-    <div class="nav-links">
-        <a href="#" class="active">Live Scores</a>
-        <a href="#">Fixtures</a>
-        <a href="#">About</a>
+    <div class="header">
+        <h1>GOALZONE</h1>
+        <p>THE FOOTBALL LIVE CENTRE</p>
     </div>
-
-    <h2>THE FOOTBALL LIVE CENTRE</h2>
-    <div class="subtitle">Live match scores, fixtures and football updates from leagues around the world.</div>
 
     <div class="controls">
-        <button id="btn-all" class="btn active" onclick="filterMatches('all')">All</button>
-        <button id="btn-live" class="btn" onclick="filterMatches('live')">🔴 Live</button>
-        <button id="btn-finished" class="btn" onclick="filterMatches('finished')">Finished</button>
-        <button id="btn-upcoming" class="btn" onclick="filterMatches('upcoming')">Upcoming</button>
-        
-        <input type="date" id="match-date" class="date-picker" onchange="onDateChange()">
-        <button class="refresh-btn" onclick="fetchData()" title="Refresh">↻ Refresh</button>
+        <div class="btn-group">
+            <button id="btn-all" class="btn active" onclick="filterMatches('all')">All</button>
+            <button id="btn-live" class="btn" onclick="filterMatches('live')">Live</button>
+            <button id="btn-finished" class="btn" onclick="filterMatches('finished')">Finished</button>
+            <button id="btn-upcoming" class="btn" onclick="filterMatches('upcoming')">Upcoming</button>
+        </div>
+        <div>
+            <input type="date" id="match-date" class="date-picker" onchange="fetchDataByDate()">
+            <button class="refresh-btn" onclick="fetchData()">🔄 Refresh</button>
+        </div>
     </div>
 
-    <div class="match-container" id="match-centre">
-        <div class="status-message" id="status-text">Connecting to server...</div>
-        <div id="match-list"></div>
+    <div class="watch-box">
+        <p>✨ Live Streams: <a href="https://sports-track.link/new" target="_blank">SportsTrack</a></p>
+    </div>
+
+    <div id="match-list" class="match-list">
+        <div class="status-text">Loading matches...</div>
     </div>
 
     <script>
-        const BACKEND_URL = 'https://muhammad-c5sn.onrender.com';
+        const BACKEND_URL = window.location.origin;
         let currentFilter = 'all';
+        let matchesData = [];
 
-        // പുതിയ ലിങ്ക് ചേർത്തിരിക്കുന്നു
-        const SPORTS_TRACK_LINK = 'https://share.google/6kS9Gru7ZwRLMwaph';
-
-        const localDate = new Date();
-        const offset = localDate.getTimezoneOffset();
-        const adjustedDate = new Date(localDate.getTime() - (offset * 60 * 1000));
-        document.getElementById('match-date').value = adjustedDate.toISOString().split('T')[0];
-
-        function filterMatches(filterType) {
-            currentFilter = filterType;
-            const buttons = ['all', 'live', 'finished', 'upcoming'];
-            buttons.forEach(b => {
-                document.getElementById(`btn-${b}`).classList.toggle('active', b === filterType);
-            });
-            fetchData();
-        }
-
-        function onDateChange() {
-            fetchData();
-        }
+        document.getElementById('match-date').valueAsDate = new Date();
 
         async function fetchData() {
-            const statusText = document.getElementById('status-text');
-            const matchList = document.getElementById('match-list');
+            const statusDiv = document.getElementById('match-list');
+            statusDiv.innerHTML = '<div class="status-text">Connecting to server...</div>';
             
-            statusText.style.display = 'block';
-            statusText.innerText = "Loading matches...";
-            matchList.innerHTML = '';
-
-            const selectedDate = document.getElementById('match-date').value;
-            
-            let url = `${BACKEND_URL}/api/fixtures?date=${selectedDate}`;
-            if (currentFilter === 'live') {
-                url = `${BACKEND_URL}/api/live`;
-            }
-
             try {
-                const response = await fetch(url);
+                const response = await fetch(`${BACKEND_URL}/api/live`);
                 const data = await response.json();
                 
-                statusText.style.display = 'none';
-
                 if (data.error) {
-                    matchList.innerHTML = `<div class="status-message">API Error: ${JSON.stringify(data.error)}</div>`;
+                    statusDiv.innerHTML = `<div class="status-text">Error: ${JSON.stringify(data.error)}</div>`;
                     return;
                 }
-
-                if (!data.response || data.response.length === 0) {
-                    matchList.innerHTML = `<div class="status-message">No matches found for this selection.</div>`;
-                    return;
-                }
-
-                let filteredResponse = data.response;
-
-                if (currentFilter !== 'live') {
-                    if (currentFilter === 'finished') {
-                        filteredResponse = data.response.filter(item => item.fixture.status.short === 'FT');
-                    } else if (currentFilter === 'upcoming') {
-                        filteredResponse = data.response.filter(item => item.fixture.status.short === 'NS');
-                    }
-                }
-
-                if (filteredResponse.length === 0) {
-                    matchList.innerHTML = `<div class="status-message">No matches match the active filter.</div>`;
-                    return;
-                }
-
-                filteredResponse.forEach(item => {
-                    const fixture = item.fixture;
-                    const teams = item.teams;
-                    const goals = item.goals;
-
-                    const homeScore = goals.home !== null ? goals.home : '-';
-                    const awayScore = goals.away !== null ? goals.away : '-';
-
-                    let statusHTML = '';
-                    if (fixture.status.short !== 'NS' && fixture.status.short !== 'FT') {
-                        statusHTML = `<div class="live-badge">${fixture.status.elapsed}'</div>`;
-                    } else {
-                        statusHTML = `<span class="status-tag">${fixture.status.short}</span>`;
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'match-card';
-                    card.innerHTML = `
-                        <div class="match-info">
-                            <div class="team home">${teams.home.name}</div>
-                            <div class="score">
-                                ${statusHTML}
-                                <div>${homeScore} - ${awayScore}</div>
-                            </div>
-                            <div class="team away">${teams.away.name}</div>
-                        </div>
-                        <a href="${SPORTS_TRACK_LINK}" target="_blank" class="watch-btn">📺 Watch Live / Play</a>
-                    `;
-                    matchList.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                statusText.style.display = 'block';
-                statusText.innerText = "Failed to connect to server.";
+                
+                matchesData = data;
+                renderMatches();
+            } catch (err) {
+                statusDiv.innerHTML = '<div class="status-text">Failed to connect to server.</div>';
             }
+        }
+
+        async function fetchDataByDate() {
+            const dateVal = document.getElementById('match-date').value;
+            const statusDiv = document.getElementById('match-list');
+            statusDiv.innerHTML = '<div class="status-text">Fetching matches for ' + dateVal + '...</div>';
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/fixtures?date=${dateVal}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    statusDiv.innerHTML = `<div class="status-text">Error: ${JSON.stringify(data.error)}</div>`;
+                    return;
+                }
+                
+                matchesData = data;
+                renderMatches();
+            } catch (err) {
+                statusDiv.innerHTML = '<div class="status-text">Failed to connect to server.</div>';
+            }
+        }
+
+        function filterMatches(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${filter}`).classList.add('active');
+            renderMatches();
+        }
+
+        function renderMatches() {
+            const container = document.getElementById('match-list');
+            container.innerHTML = '';
+
+            let filtered = matchesData.filter(item => {
+                const status = item.fixture.status.short;
+                if (currentFilter === 'live') return ['1H', 'HT', '2H', 'ET', 'P'].includes(status);
+                if (currentFilter === 'finished') return ['FT', 'AET', 'PEN'].includes(status);
+                if (currentFilter === 'upcoming') return ['NS', 'TBD'].includes(status);
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="status-text">No matches found for this selection.</div>';
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                
+                const isLive = ['1H', 'HT', '2H', 'ET', 'P'].includes(item.fixture.status.short);
+                const scoreText = (item.goals.home !== null && item.goals.away !== null) 
+                    ? `${item.goals.home} - ${item.goals.away}` 
+                    : 'VS';
+
+                card.innerHTML = `
+                    <div class="team-info">
+                        <img src="${item.teams.home.logo}" class="team-logo" alt="">
+                        <span class="team-name">${item.teams.home.name}</span>
+                    </div>
+                    <div class="score-info">
+                        <div>${scoreText}</div>
+                        <span class="status-badge ${isLive ? 'live' : ''}">${item.fixture.status.elapsed ? item.fixture.status.elapsed + "'" : item.fixture.status.short}</span>
+                    </div>
+                    <div class="team-info away">
+                        <span class="team-name">${item.teams.away.name}</span>
+                        <img src="${item.teams.away.logo}" class="team-logo" alt="">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         fetchData();
-
-        setInterval(() => {
-            if (currentFilter === 'live') fetchData();
-        }, 30000);
     </script>
 </body>
 </html>
